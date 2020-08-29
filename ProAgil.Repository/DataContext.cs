@@ -11,5 +11,11 @@ namespace ProAgil.Repository
         public DbSet<Lot> Lots{get;set;}
         public DbSet<Speaker> Speakers{get;set;}
         public DbSet<SpeakerEvent> SpeakerEvents{get;set;}
+
+        /// especificando n x n
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<SpeakerEvent>().HasKey(PE => new{PE.EventId,PE.SpeakerId});
+        }
     }
 }
