@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace ProAgil.Domain
 {
@@ -12,6 +13,10 @@ namespace ProAgil.Domain
         public string ImageURL { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
+
+        public List<Lot> Lots{ get; set; }
+        public List<SocialNetworks> SocialNetworks { get; set; }
+        public List<SpeakerEvent> SpeakerEvents  { get; set; }        
         
     }
 }
