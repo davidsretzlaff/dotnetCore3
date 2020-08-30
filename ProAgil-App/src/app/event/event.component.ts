@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, TemplateRef } from '@angular/core';
+import { EventService} from '../_service/event.service';
+import { Event } from '../_models/Event';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-event',
@@ -8,9 +11,20 @@ import { HttpClient } from '@angular/common/http';
 })
 export class EventComponent implements OnInit {
 
-  constructor(private http: HttpClient) { }
+  eventFilter: Event[];
+  events: Event[];
+  imageWidth = 28;
+  imageMargin = 2;
+  showImage = false;
+  _filterList = '';
+  modalRef: BsModalRef;
+  registerForm: FormGroup;
 
-  _filterList: string;
+  constructor(
+    private eventService: EventService,
+    private modalService: BsModalService,
+    private fb: FormBuilder
+    ) { }
 
   get filterList(){
     return this._filterList;
@@ -20,29 +34,51 @@ export class EventComponent implements OnInit {
     this.eventFilter = this.filterList ? this.filterEvents(this.filterList) : this.events;
   }
 
-  eventFilter: any = [];
-  events: any = [];
-  imageWidth = 28;
-  imageMargin = 2;
-  showImage = false;
-  
+  openModal(template: TemplateRef<any>){
+      this.modalRef = this.modalService.show(template);
+  }
+
   ngOnInit(){
+    this.validation();
     this.getEvent();
     this.filterEvents('');
   }
 
-  filterEvents(filter : string) : any{
+  filterEvents(filter : string): Event[]{
+    if(!filter){
+      return this.events;
+    }
     filter = filter.toLocaleLowerCase();
     return this.events.filter(
-      event => event.theme.toLocaleLowerCase().indexOf(filter) !== -1 ||
-      event.place.toLocaleLowerCase().indexOf(filter) !== -1
+      event => event.theme.toLocaleLowerCase().includes(filter) ||
+      event.place.toLocaleLowerCase().includes(filter)
     );
   }
   
+  saveChange(){    
+  }
+
+  validation(){
+    this.registerForm = new FormGroup({
+      theme: new FormControl('',
+      [
+        Validators.required,
+        Validators.minLength(4),
+        Validators.maxLength(50)
+      ]),
+      place: new FormControl('', Validators.required),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      quantity: new FormControl('', [Validators.required, Validators.max(12000)]),
+      eventDate: new FormControl('', Validators.required),
+      phone: new FormControl('', Validators.required),
+      imageURL: new FormControl('', Validators.required)
+    });
+  }
+
   getEvent(){
-    this.http.get('http://localhost:5000/api/event').subscribe(
-      response => {
-        this.events = response;
+    this.eventService.getAllEvent().subscribe(
+      (_events: Event[]) => {
+        this.events = _events;
         this.eventFilter = this.events;
       },
       error => {
