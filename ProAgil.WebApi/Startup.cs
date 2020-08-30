@@ -38,9 +38,8 @@ namespace ProAgil.WebApi
             services.AddMvc();
 
             //services.AddAutoMapper(typeof(Startup));
-            services.AddCors();
             services.AddControllers();
-
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,7 +49,7 @@ namespace ProAgil.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -62,7 +61,7 @@ namespace ProAgil.WebApi
                 endpoints.MapControllers();
             });
             app.UseStaticFiles();
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+       
         }
     }
 }
