@@ -26,6 +26,9 @@ namespace ProAgil.Repository
         {
             _context.Update(entity);
         }
+        public void DeleteRange<T>(T[] entityArray) where T: class{
+            _context.RemoveRange(entityArray);
+        }
         public async Task<bool> SaveChangesAsync()
         {
             // se salvou retorna  true
@@ -35,31 +38,33 @@ namespace ProAgil.Repository
         // EVENTS
         public async Task<Event> GetEventById(int EventId, bool includeSpeaker)
         {
-           IQueryable<Event> query = EventIncludeLotSocialNetworks(_context.Events);
+           IQueryable<Event> query = _context.Events.Include(e => e.Lots).
+            Include(e => e.SocialNetworks);
 
             if(includeSpeaker){
-                query = EventIncludeSpeaker(query);
+                query = query.Include(se => se.SpeakerEvents).ThenInclude(s => s.SpeakerId);
             }
 
-            query = query.OrderByDescending(c => c.EventDate).Where(c => c.Id == EventId);
+            //query = query.OrderByDescending(c => c.EventDate).Where(c => c.Id == EventId);
             return await query.FirstOrDefaultAsync();
         }
         public async Task<Event[]> GetAllEvents(bool includeSpeaker)
         {
-           IQueryable<Event> query = EventIncludeLotSocialNetworks(_context.Events);
-
+            IQueryable<Event> query = _context.Events.Include(e => e.Lots).Include(e => e.SocialNetworks);
+            
             if(includeSpeaker){
-                query = EventIncludeSpeaker(query);
+                query = query.Include(se => se.SpeakerEvents).ThenInclude(s => s.Speaker);
             }
 
             return await query.ToArrayAsync();
         }
         public async Task<Event[]> GetEventsByTheme(string theme, bool includeSpeaker)
         {
-            IQueryable<Event> query = EventIncludeLotSocialNetworks(_context.Events);
+            IQueryable<Event> query = _context.Events.Include(e => e.Lots).
+            Include(e => e.SocialNetworks);
 
             if(includeSpeaker){
-                query = EventIncludeSpeaker(query);
+                query = query.Include(se => se.SpeakerEvents).ThenInclude(s => s.SpeakerId);
             }
 
             return await query.OrderByDescending(e => e.Theme.ToLower().Contains(theme.ToLower())).ToArrayAsync();
@@ -68,53 +73,33 @@ namespace ProAgil.Repository
         // SPEAKER
         public async Task<Speaker> GetSpeakerById(int speakerId, bool includeEvents)
         {
-            IQueryable<Speaker> query = SpeakerIncludeSocialNetworks(_context.Speakers);
+            IQueryable<Speaker> query = _context.Speakers.Include(e => e.SocialNetworks);
 
             if(includeEvents){
-                query = SpeakerIncludeEvent(query);
+                query = query.Include(se => se.SpeakerEvents).ThenInclude(s => s.Event);
             }
             return await query.Where(c => c.Id == speakerId).FirstOrDefaultAsync();
         }
         
         public async Task<Speaker[]> GetAllSpeaker(bool includeEvents)
         {
-            IQueryable<Speaker> query = SpeakerIncludeSocialNetworks(_context.Speakers);
+            IQueryable<Speaker> query = _context.Speakers.Include(e => e.SocialNetworks);
 
             if(includeEvents){
-                query = SpeakerIncludeEvent(query);
+                query = query.Include(se => se.SpeakerEvents).ThenInclude(s => s.Event);
             }
             return await query.ToArrayAsync();
         }
 
         public async Task<Speaker[]> GetSpeakerByName(string name, bool includeEvents)
         {
-            IQueryable<Speaker> query = SpeakerIncludeSocialNetworks(_context.Speakers);
+            IQueryable<Speaker> query = _context.Speakers.Include(e => e.SocialNetworks);
 
             if(includeEvents){
-                query = SpeakerIncludeEvent(query);
+                query = query.Include(se => se.SpeakerEvents).ThenInclude(s => s.Event);
             }
 
             return await query.Where(c => c.Name.ToLower().Contains(name.ToLower())).ToArrayAsync();
-        }
-
-        // INCLUDES
-        private IQueryable<Event> EventIncludeSpeaker(IQueryable<Event> query)
-        {
-            return query.Include(se => se.SpeakerEvents).ThenInclude(s => s.SpeakerId);
-        }
-        private IQueryable<Event> EventIncludeLotSocialNetworks(IQueryable<Event> query)
-        {
-            return 
-            query.Include(e => e.Lots).
-            Include(e => e.SocialNetworks);
-        }
-        private IQueryable<Speaker> SpeakerIncludeEvent(IQueryable<Speaker> query)
-        {
-            return query.Include(se => se.SpeakerEvents).ThenInclude(s => s.Event);
-        }
-        private IQueryable<Speaker> SpeakerIncludeSocialNetworks(IQueryable<Speaker> query)
-        {
-            return query.Include(e => e.SocialNetworks);
         }
     }
 }

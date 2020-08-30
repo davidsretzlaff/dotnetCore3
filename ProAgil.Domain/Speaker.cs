@@ -4,6 +4,9 @@ namespace ProAgil.Domain
 {
     public class Speaker
     {
+        // public Speaker(){
+        //     this.SpeakerEvents = new HashSet<SpeakerEvent>();
+        // }
         public int Id { get; set; }
         public string Name { get; set; }
         public string Curse { get; set; }

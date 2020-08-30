@@ -32,8 +32,15 @@ namespace ProAgil.WebApi
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IProAgilRepository,ProAgilRepository>();
             services.AddAutoMapper(typeof(AutoMapperProfiles));
+            services.AddControllers().AddNewtonsoftJson(options =>
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
+            services.AddMvc();
+
+            //services.AddAutoMapper(typeof(Startup));
             services.AddCors();
             services.AddControllers();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

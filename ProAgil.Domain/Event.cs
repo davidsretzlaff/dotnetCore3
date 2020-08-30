@@ -5,6 +5,9 @@ namespace ProAgil.Domain
 {
     public class Event
     {
+        // public Event(){
+        //     this.SpeakerEvents = new HashSet<SpeakerEvent>();
+        // }
         public int Id { get; set; }
         public string Place { get; set; }
         public DateTime EventDate { get; set; }
@@ -16,7 +19,7 @@ namespace ProAgil.Domain
 
         public List<Lot> Lots{ get; set; }
         public List<SocialNetworks> SocialNetworks { get; set; }
-        public List<SpeakerEvent> SpeakerEvents  { get; set; }        
-        
+        public virtual List<SpeakerEvent> SpeakerEvents  { get; set; }        
+
     }
 }

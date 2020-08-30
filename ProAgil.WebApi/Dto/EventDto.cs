@@ -14,7 +14,7 @@ namespace ProAgil.WebApi.Dto
         public string EventDate { get; set; }
 
         [Required (ErrorMessage="O Tema deve ser Preeenchido")]
-        public string Thema { get; set; }
+        public string Theme { get; set; }
         
         [Range(2, 120000, ErrorMessage="Quatidade de Pessoas é entre 2 e 120000")]
         public int Quantity { get; set; }
@@ -25,8 +25,8 @@ namespace ProAgil.WebApi.Dto
         
         [EmailAddress(ErrorMessage="Email Inválido")]
         public string Email { get; set; }
-        public List<LotDto> Lot { get; set; }
+        public List<LotDto> Lots { get; set; }
         public List<SocialNetworksDto> SocialNetworks { get; set; }
-        public List<SpeakersDto> Speakers { get; set; }
+        public IList<SpeakersDto> Speakers { get; set; }
     }
 }
