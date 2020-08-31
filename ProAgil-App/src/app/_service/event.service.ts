@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from "../_models/Event";
@@ -36,10 +36,10 @@ export class EventService {
   }
 
   postUpload(file: File){
-    const fileToUpload = <File>file[0];
+    const fileToUpload = <File>file;
     const formData = new FormData();
     formData.append('file', fileToUpload, fileToUpload.name);
 
-    return this.http.post(`${this.baseURL}/Upload`, formData);
+    return this.http.post(`${this.baseURL}/Upload/`, formData);
   }
 }

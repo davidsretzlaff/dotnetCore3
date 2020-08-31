@@ -41,7 +41,7 @@
         <tr *ngFor="let event of eventFilter">
             <td>
                 <img *ngIf="showImage" 
-                    src="http://localhost:5000/Resources/Images/{{event.imageURL}}" 
+                    src="http://localhost:5000/Resources/Images/{{event.imageURL}}?_ts={{currentTime}}" 
                     [style.width.px]="imageWidth"
                     [style.margin.px]="imageMargin"
                 >

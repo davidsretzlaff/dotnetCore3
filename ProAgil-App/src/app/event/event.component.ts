@@ -30,7 +30,8 @@ export class EventComponent implements OnInit {
   bodyDeleteEvent = '';
   title = 'Eventos';
   file: File;
-
+  fileNameToUpdate: string;
+  currentTime: string;
   constructor(
     private eventService: EventService,
     private modalService: BsModalService,
@@ -76,12 +77,13 @@ export class EventComponent implements OnInit {
     this.openModal(template);
   }
 
-  editEvent(evento: Event, template: any) {
+  editEvent(eventForm: Event, template: any) {
     this.saveMethod = 'putEvent';
     this.openModal(template);
-    this.event = evento;
+    this.event = {...eventForm};
+    this.fileNameToUpdate = eventForm.imageURL.toString();
     this.event.imageURL = '';
-    this.registerForm.patchValue(evento);
+    this.registerForm.patchValue(this.event);
   }
 
   deleteEvent(event: Event, template: any) {
@@ -115,17 +117,22 @@ export class EventComponent implements OnInit {
       if (this.registerForm.valid) {
         this.event = Object.assign(this.event ? { id: this.event.id } : {}, this.registerForm.value);
         const fileName = this.event.imageURL.split('\\', 3);
-
         if (this.file){
-          this.eventService.postUpload(this.file).subscribe();
-          this.event.imageURL = fileName[2];
+          // nameimage = id event
+          const extensionFile = this.file[0].type.split('/', 2);
+          this.event.imageURL = `${this.event.id.toString()}.${extensionFile[1]}`;
+          let imgFile = new File([this.file[0]], this.event.imageURL , {type: this.file[0].type});
+          
+          this.eventService.postUpload(imgFile).subscribe(() =>{
+              this.currentTime = new Date().getMilliseconds().toString();
+              this.getEvent();
+          });
         }
 
         this.eventService[this.saveMethod](this.event).subscribe(
           () => {
             template.hide();
             this.getEvent();
-
             this.toastr.success(`${methodMessage} com Sucesso`);
           }, error => {
             this.toastr.error(`Erro ao ${methodMessageError}: ${error.message}`);
@@ -166,8 +173,7 @@ export class EventComponent implements OnInit {
     const reader = new FileReader();
 
     if(event.target.files && event.target.files.length){
-      this.file = event.target.files;
-      console.log(this.file);
+      this.file = event.target.files;      
     }
   }
 }

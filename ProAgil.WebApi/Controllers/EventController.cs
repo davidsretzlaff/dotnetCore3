@@ -144,9 +144,9 @@ namespace ProAgil.WebApi.Controllers
                     if(file.Length > 0){
                         var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName;
                         var fullPath = Path.Combine(pathToSave,fileName.Replace("\""," ").Trim());
-
+                        
                         await using(var stream = new FileStream(fullPath, FileMode.Create)){
-                            file.CopyTo(stream);
+                            file.CopyTo(stream);                            
                             }
                     }
                     return Ok();
