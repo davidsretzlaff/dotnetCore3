@@ -39,6 +39,21 @@ namespace ProAgil.WebApi.Controllers
             }            
         }
 
+        [HttpGet("getByTheme/{theme}")]
+        public async Task<IActionResult> Get(string theme)
+        {
+            try{
+                var events = await _repo.GetEventsByTheme(theme,true);
+                // match date to dto
+                var result = _mapper.Map<EventDto[]>(events);
+                return Ok(result);
+            }
+            catch(System.Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError,$"Banco dados falhou {ex.Message}");
+            }            
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(EventDto eventDto)
         {

@@ -22,4 +22,15 @@ export class EventService {
     return this.http.get<Event>(`${this.baseURL}/${id}`);
   }
 
+  postEvent(event: Event){
+    return this.http.post<Event>(this.baseURL, event);
+  }
+
+  putEvent(event: Event){
+    return this.http.put<Event>(`${this.baseURL}/${event.id}`, event);
+  }
+
+  deleteEvent(id: number){
+    return this.http.delete<Event>(`${this.baseURL}/${id}`);
+  }
 }
