@@ -12,15 +12,21 @@ import { AppComponent } from './app.component';
 import { EventComponent } from './event/event.component';
 import { NavComponent } from './nav/nav.component';
 import { ToastrModule } from 'ngx-toastr';
-
 import { DateTimeFormatPipePipe } from './_helpers/DateTimeFormatPipe.pipe';
-
+import { StalkerComponent } from './stalker/stalker.component';
+import { ContactComponent } from './contact/contact.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { TitleComponent } from "./_shared/title/title.component";;
 @NgModule({
   declarations: [
     AppComponent,
       EventComponent,
       NavComponent,
-      DateTimeFormatPipePipe
+      DateTimeFormatPipePipe,
+      StalkerComponent,
+      ContactComponent,
+      DashboardComponent,
+      TitleComponent
    ],
   imports: [
     BrowserModule,

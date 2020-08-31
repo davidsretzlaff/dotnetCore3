@@ -28,6 +28,9 @@ export class EventComponent implements OnInit {
   registerForm: FormGroup;
   saveMethod = 'postEvento';
   bodyDeleteEvent = '';
+  title = 'Eventos';
+  file: File;
+
   constructor(
     private eventService: EventService,
     private modalService: BsModalService,
@@ -72,20 +75,21 @@ export class EventComponent implements OnInit {
     this.saveMethod = 'postEvent';
     this.openModal(template);
   }
- 
+
   editEvent(evento: Event, template: any) {
     this.saveMethod = 'putEvent';
     this.openModal(template);
     this.event = evento;
+    this.event.imageURL = '';
     this.registerForm.patchValue(evento);
   }
-  
+
   deleteEvent(event: Event, template: any) {
     this.openModal(template);
     this.event = event;
     this.bodyDeleteEvent = `Tem certeza que deseja excluir o Evento: ${event.theme}, Código: ${event.id}`;
   }
-  
+
   confirmeDelete(template: any) {
     this.eventService.deleteEvent(this.event.id).subscribe(
       () => {
@@ -99,15 +103,24 @@ export class EventComponent implements OnInit {
     );
   }
   saveChange(template: any){
-    let methodMessage = 'Editavel';
+    let methodMessage = 'Editado';
     let methodMessageError = 'Editar';
-    if(this.saveMethod.toLowerCase() === 'postevent'){
+
+
+    if (this.saveMethod.toLowerCase() === 'postevent'){
       methodMessage = 'Inserido';
       methodMessageError = 'Inserir';
     }
-    if(this.registerForm.valid){
+    if (this.registerForm.valid){
       if (this.registerForm.valid) {
         this.event = Object.assign(this.event ? { id: this.event.id } : {}, this.registerForm.value);
+        const fileName = this.event.imageURL.split('\\', 3);
+
+        if (this.file){
+          this.eventService.postUpload(this.file).subscribe();
+          this.event.imageURL = fileName[2];
+        }
+
         this.eventService[this.saveMethod](this.event).subscribe(
           () => {
             template.hide();
@@ -147,5 +160,14 @@ export class EventComponent implements OnInit {
   }
   switchImage(){
     this.showImage = !this.showImage;
+  }
+
+  onFileChange(event){
+    const reader = new FileReader();
+
+    if(event.target.files && event.target.files.length){
+      this.file = event.target.files;
+      console.log(this.file);
+    }
   }
 }
