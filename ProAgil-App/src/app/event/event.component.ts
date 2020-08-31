@@ -6,6 +6,8 @@ import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { ptBrLocale } from 'ngx-bootstrap/locale';
 import { defineLocale } from 'ngx-bootstrap/chronos';
+import { ToastrService } from 'ngx-toastr';
+
 defineLocale('pt-br', ptBrLocale);
 
 @Component({
@@ -15,6 +17,7 @@ defineLocale('pt-br', ptBrLocale);
 })
 export class EventComponent implements OnInit {
 
+  eventDate: string;
   eventFilter: Event[];
   events: Event[];
   event: Event;
@@ -29,7 +32,8 @@ export class EventComponent implements OnInit {
     private eventService: EventService,
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private localeService : BsLocaleService
+    private localeService : BsLocaleService,
+    private toastr: ToastrService
     ) { 
       this.localeService.use('pt-br');
     }
@@ -87,25 +91,33 @@ export class EventComponent implements OnInit {
       () => {
           template.hide();
           this.getEvent();
+          this.toastr.success('Deletado com sucesso');
         }, error => {
+          this.toastr.error('Erro ao tentar Deletar');
           console.log(error);
         }
     );
   }
   saveChange(template: any){
+    let methodMessage = 'Editavel';
+    let methodMessageError = 'Editar';
+    if(this.saveMethod.toLowerCase() === 'postevent'){
+      methodMessage = 'Inserido';
+      methodMessageError = 'Inserir';
+    }
     if(this.registerForm.valid){
       if (this.registerForm.valid) {
-        console.log('savemethod',this.saveMethod);
-
-        this.event = Object.assign(this.event ? { id: this.event.id } : {}, this.registerForm.value)
+        this.event = Object.assign(this.event ? { id: this.event.id } : {}, this.registerForm.value);
         this.eventService[this.saveMethod](this.event).subscribe(
           () => {
             template.hide();
             this.getEvent();
+
+            this.toastr.success(`${methodMessage} com Sucesso`);
           }, error => {
-            console.log(error);
+            this.toastr.error(`Erro ao ${methodMessageError}: ${error.message}`);
           }
-        )
+        );
       }
     }
   }
@@ -129,7 +141,7 @@ export class EventComponent implements OnInit {
         this.eventFilter = this.events;
       },
       error => {
-        console.log(error);
+        this.toastr.error(`Erro ao tentar carregar eventos`);
       }
     );
   }
