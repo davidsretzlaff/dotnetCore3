@@ -17,6 +17,10 @@ import { StalkerComponent } from './stalker/stalker.component';
 import { ContactComponent } from './contact/contact.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TitleComponent } from "./_shared/title/title.component";;
+import { UserComponent } from './User/User.component';
+import { LoginComponent } from './User/login/login.component';
+import { RegistrationComponent } from './User/registration/registration.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -26,7 +30,11 @@ import { TitleComponent } from "./_shared/title/title.component";;
       StalkerComponent,
       ContactComponent,
       DashboardComponent,
-      TitleComponent
+      TitleComponent,
+      UserComponent,
+      UserComponent,
+      RegistrationComponent,
+      LoginComponent
    ],
   imports: [
     BrowserModule,
