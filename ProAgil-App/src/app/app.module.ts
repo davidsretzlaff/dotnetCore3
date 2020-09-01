@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
@@ -20,6 +20,7 @@ import { TitleComponent } from "./_shared/title/title.component";;
 import { UserComponent } from './User/User.component';
 import { LoginComponent } from './User/login/login.component';
 import { RegistrationComponent } from './User/registration/registration.component';
+import { AuthInterceptor } from './auth/auth.interceptor.spec';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,13 @@ import { RegistrationComponent } from './User/registration/registration.componen
     BsDatepickerModule.forRoot(),
     ToastrModule.forRoot()
   ],
-  providers: [],
+  providers: [
+    {
+      provide : HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

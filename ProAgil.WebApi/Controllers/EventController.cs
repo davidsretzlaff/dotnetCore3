@@ -66,7 +66,12 @@ namespace ProAgil.WebApi.Controllers
             
                 if(await _repo.SaveChangesAsync()){
                     // mapper reverse
-                    return Created($"/api/event/{eventDto.Id}",_mapper.Map<EventDto>(eventModel));
+                     var result = Created($"/api/event/{eventDto.Id}",_mapper.Map<EventDto>(eventModel));
+                     eventModel.ImageURL = eventModel.Id.ToString() + eventModel.ImageURL;
+                     _repo.Update(eventModel);
+                     if(await _repo.SaveChangesAsync()){
+                        return Created($"/api/event/{eventDto.Id}",eventModel);
+                     }                     
                 }
             }
             catch(System.Exception ex)

@@ -7,6 +7,7 @@ import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { ptBrLocale } from 'ngx-bootstrap/locale';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { ToastrService } from 'ngx-toastr';
+import { stringify } from '@angular/compiler/src/util';
 
 defineLocale('pt-br', ptBrLocale);
 
@@ -74,6 +75,7 @@ export class EventComponent implements OnInit {
 
   newEvent(template: any) {
     this.saveMethod = 'postEvent';
+    this.event = null;
     this.openModal(template);
   }
 
@@ -114,34 +116,39 @@ export class EventComponent implements OnInit {
       methodMessageError = 'Inserir';
     }
     if (this.registerForm.valid){
-      if (this.registerForm.valid) {
         this.event = Object.assign(this.event ? { id: this.event.id } : {}, this.registerForm.value);
-        const fileName = this.event.imageURL.split('\\', 3);
-        if (this.file){
-          // nameimage = id event
-          const extensionFile = this.file[0].type.split('/', 2);
-          this.event.imageURL = `${this.event.id.toString()}.${extensionFile[1]}`;
-          let imgFile = new File([this.file[0]], this.event.imageURL , {type: this.file[0].type});
-          
-          this.eventService.postUpload(imgFile).subscribe(() =>{
-              this.currentTime = new Date().getMilliseconds().toString();
-              this.getEvent();
-          });
-        }
+        this.event.imageURL = this.nameImage();
 
         this.eventService[this.saveMethod](this.event).subscribe(
-          () => {
+          (r) => {
             template.hide();
-            this.getEvent();
+            if (this.file){
+              if (this.saveMethod === 'postEvent'){
+                this.event.imageURL = `${r.id}${this.nameImage()}`;
+              }
+              const imgFile = new File([this.file[0]], this.event.imageURL , {type: this.file[0].type});
+              this.eventService.postUpload(imgFile).subscribe(() => {
+                  this.currentTime = new Date().getMilliseconds().toString();
+              });
+              this.getEvent();
+            }
+
             this.toastr.success(`${methodMessage} com Sucesso`);
           }, error => {
             this.toastr.error(`Erro ao ${methodMessageError}: ${error.message}`);
           }
         );
-      }
     }
   }
 
+  nameImage(){
+    const extensionFile = this.file[0].type.split('/', 2);
+    let idToNameImage = '';
+    if (this.saveMethod === 'putEvent'){
+          idToNameImage = this.event.id.toString();
+        }
+    return `${idToNameImage}.${extensionFile[1]}`;
+  }
   validation(){
     this.registerForm = this.fb.group({
       theme: ['',[Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
@@ -173,7 +180,7 @@ export class EventComponent implements OnInit {
     const reader = new FileReader();
 
     if(event.target.files && event.target.files.length){
-      this.file = event.target.files;      
+      this.file = event.target.files;
     }
   }
 }

@@ -7,6 +7,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { UserComponent } from './User/User.component';
 import { LoginComponent } from './User/login/login.component';
 import { RegistrationComponent } from './User/registration/registration.component';
+import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   // rotas filhos
@@ -16,10 +17,10 @@ const routes: Routes = [
     {path: 'registration', component: RegistrationComponent}
   ]},
 
-  {path: 'event', component: EventComponent},
-  {path: 'stalker', component: StalkerComponent},
-  {path: 'contact', component: ContactComponent},
-  {path: 'dashboard', component: DashboardComponent},
+  {path: 'event', component: EventComponent , canActivate:[AuthGuard]},
+  {path: 'stalker', component: StalkerComponent, canActivate:[AuthGuard]},
+  {path: 'contact', component: ContactComponent, canActivate:[AuthGuard]},
+  {path: 'dashboard', component: DashboardComponent, canActivate:[AuthGuard]},
   {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
   {path: '**', redirectTo: 'dashboard', pathMatch: 'full'}
 ];
