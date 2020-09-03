@@ -30,9 +30,9 @@ namespace ProAgil.WebApi.Controllers
         public async Task<IActionResult> Get()
         {
             try{
-                var events = await _repo.GetAllEvents(true);
+                Event[] eventModel = await _repo.GetAllEvents(true);
                 // match date to dto
-                var result = _mapper.Map<EventDto[]>(events);
+                EventDto[] result = _mapper.Map<EventDto[]>(eventModel);
                 return Ok(result);
             }
             catch(System.Exception ex)
@@ -40,14 +40,28 @@ namespace ProAgil.WebApi.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError,$"Banco dados falhou {ex.Message}");
             }            
         }
+        [HttpGet("{eventId}")]
+        public async Task<IActionResult> Get(int eventId)
+        {
+            try{
+                Event eventModel = await _repo.GetEventById(eventId,true);
+                // match date to dto
+                EventDto result = _mapper.Map<EventDto>(eventModel);
+                return Ok(result);
+            }
+            catch(System.Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError,$"Banco dados falhou {ex.Message}");
+            }   
+        }
 
         [HttpGet("getByTheme/{theme}")]
         public async Task<IActionResult> Get(string theme)
         {
             try{
-                var events = await _repo.GetEventsByTheme(theme,true);
+                Event[] events = await _repo.GetEventsByTheme(theme,true);
                 // match date to dto
-                var result = _mapper.Map<EventDto[]>(events);
+                EventDto[] result = _mapper.Map<EventDto[]>(events);
                 return Ok(result);
             }
             catch(System.Exception ex)
@@ -61,7 +75,7 @@ namespace ProAgil.WebApi.Controllers
         {
             try{
                 // convert eventodto to evento
-                var eventModel = _mapper.Map<Event>(eventDto);
+                Event eventModel = _mapper.Map<Event>(eventDto);
                 _repo.Add(eventModel);
             
                 if(await _repo.SaveChangesAsync()){
@@ -86,7 +100,7 @@ namespace ProAgil.WebApi.Controllers
         public async Task<IActionResult> Delete(int EventId)
         {
             try{
-                var eventModel = await _repo.GetEventById(EventId,false);
+                Event eventModel = await _repo.GetEventById(EventId,false);
                 if(eventModel == null) return NotFound();
 
                 _repo.Delete(eventModel);
@@ -106,17 +120,17 @@ namespace ProAgil.WebApi.Controllers
         public async Task<IActionResult> Put(int eventId,EventDto eventDto)
         {
             try{
-                var eventModel = await _repo.GetEventById(eventId,false);                
+                Event eventModel = await _repo.GetEventById(eventId,false);                
                 if(eventModel == null) return NotFound();
 
-                var idLots = new List<int>();
-                var idSocialNetworks = new List<int>();
+                List<int> idLots = new List<int>();
+                List<int> idSocialNetworks = new List<int>();
                 
                 eventModel.Lots.ForEach(i => idLots.Add(i.Id));
                 eventModel.SocialNetworks.ForEach(i => idSocialNetworks.Add(i.Id));
 
-                var lots = eventModel.Lots.Where(l => !idLots.Contains(l.Id)).ToArray();
-                var socialNetworks = eventModel.SocialNetworks.Where(sn => !idSocialNetworks.Contains(sn.Id)).ToArray();
+                Lot[] lots = eventModel.Lots.Where(l => !idLots.Contains(l.Id)).ToArray();
+                SocialNetworks[] socialNetworks = eventModel.SocialNetworks.Where(sn => !idSocialNetworks.Contains(sn.Id)).ToArray();
 
                 if(lots.Length > 0) _repo.DeleteRange(lots);
                 if(socialNetworks.Length > 0) _repo.DeleteRange(socialNetworks);

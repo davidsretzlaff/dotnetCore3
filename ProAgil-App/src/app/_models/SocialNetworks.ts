@@ -1,7 +1,7 @@
 export interface SocialNetworks {
     id: number;
     name: string;
-    uRL: string;
+    url: string;
     event: Event;
     speakerId?: number;
 }

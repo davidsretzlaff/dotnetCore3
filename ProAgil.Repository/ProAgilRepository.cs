@@ -42,10 +42,13 @@ namespace ProAgil.Repository
             Include(e => e.SocialNetworks);
 
             if(includeSpeaker){
-                query = query.Include(se => se.SpeakerEvents).ThenInclude(s => s.SpeakerId);
+                query = query.Include(se => se.SpeakerEvents).ThenInclude(s => s.Speaker);
             }
 
-            //query = query.OrderByDescending(c => c.EventDate).Where(c => c.Id == EventId);
+              query = query
+                        .AsNoTracking()
+                        .OrderBy(c => c.Id)
+                        .Where(c => c.Id == EventId);
             return await query.FirstOrDefaultAsync();
         }
         public async Task<Event[]> GetAllEvents(bool includeSpeaker)
@@ -64,7 +67,7 @@ namespace ProAgil.Repository
             Include(e => e.SocialNetworks);
 
             if(includeSpeaker){
-                query = query.Include(se => se.SpeakerEvents).ThenInclude(s => s.SpeakerId);
+                query = query.Include(se => se.SpeakerEvents).ThenInclude(s => s.Speaker);
             }
 
             return await query.OrderByDescending(e => e.Theme.ToLower().Contains(theme.ToLower())).ToArrayAsync();

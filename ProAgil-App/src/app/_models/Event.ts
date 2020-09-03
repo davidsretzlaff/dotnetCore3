@@ -2,7 +2,8 @@ import { Lot  } from './Lot';
 import { SocialNetworks } from './SocialNetworks';
 import { Speaker } from './Speaker';
 
-export interface Event {
+export class Event {
+    constructor(){}
     id: number;
     place: string;
     eventDate: Date;

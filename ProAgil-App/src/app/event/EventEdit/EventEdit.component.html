@@ -1,0 +1,217 @@
+<app-title [title]="title"></app-title>
+<form [formGroup]="registerForm">
+  <div class="row">
+    <div class="col-md-8">
+      <tabset>
+        <tab heading="Evento">
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label>theme</label>
+              <input type="text" class="form-control" [(ngModel)]="event.theme"
+                [ngClass]="{'is-invalid': registerForm.get('theme').errors && registerForm.get('theme').touched}"
+                formControlName="theme" placeholder="Insira o theme">
+              <div *ngIf="registerForm.get('theme').hasError('required')
+              && registerForm.get('theme').touched" class="invalid-feedback">
+                theme é obrigatório.
+              </div>
+              <div *ngIf="registerForm.get('theme').hasError('minlength')
+            && registerForm.get('theme').touched" class="invalid-feedback">
+                theme deve ter no mínimo 4 Caracters.
+              </div>
+              <div *ngIf="registerForm.get('theme').hasError('maxlength')
+          && registerForm.get('theme').touched" class="invalid-feedback">
+                theme deve ter no máximo 50 Caracters.
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-8">
+              <label>place</label>
+              <input type="text" class="form-control" [(ngModel)]="event.place" [ngClass]="{'is-invalid': registerForm.get('place').errors 
+              && registerForm.get('place').touched}" formControlName="place" placeholder="">
+              <div *ngIf="registerForm.get('place').hasError('required')
+              && registerForm.get('place').touched" class="invalid-feedback">
+                place é obrigatório.
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <label>Data e Hora</label>
+               <input type="text" class="form-control" [(ngModel)]="event.eventDate" bsDatepicker
+                value="{{event.eventDate | DateTimeFormatPipe}}" [(ngModel)]="event.eventDate"
+                [bsConfig]="{ dateInputFormat : 'DD/MM/YYYY hh:mm' }" [ngClass]="{'is-invalid': registerForm.get('eventDate').errors 
+            && registerForm.get('eventDate').touched}" formControlName="eventDate" placeholder="">
+              <div *ngIf="registerForm.get('eventDate').hasError('required')
+            && registerForm.get('eventDate').touched" class="invalid-feedback">
+                Data e hora é obrigatório.
+              </div> 
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-2">
+              <label>Qtd Pessoas</label>
+              <input type="text" [(ngModel)]="event.quantity" [ngClass]="{'is-invalid': registerForm.get('quantity').errors 
+              && registerForm.get('quantity').touched}" class="form-control is-invalid" formControlName="quantity"
+                placeholder="">
+              <div *ngIf="registerForm.get('quantity').hasError('required')
+              && registerForm.get('quantity').touched" class="invalid-feedback">
+                Qtd Pessoas é obrigatório.
+              </div>
+              <div *ngIf="registerForm.get('quantity').hasError('max')
+            && registerForm.get('quantity').touched" class="invalid-feedback">
+                Qtd Pessoas deve ser menor que 120000.
+              </div>
+            </div>
+
+            <div class="form-group col-md-4">
+              <label>phone</label>
+              <input type="text" mask="(000) 0000-0000" class="form-control" [(ngModel)]="event.phone" [ngClass]="{'is-invalid': registerForm.get('phone').errors 
+            && registerForm.get('phone').touched}" formControlName="phone" placeholder="(000) 90000-0000">
+              <div *ngIf="registerForm.get('phone').hasError('required')
+            && registerForm.get('phone').touched" class="invalid-feedback">
+                phone é obrigatório.
+              </div>
+            </div>
+            <div class="form-group col-md-6">
+              <label>Email</label>
+              <input type="text" class="form-control" [(ngModel)]="event.email" [ngClass]="{'is-invalid': registerForm.get('email').errors 
+            && registerForm.get('email').touched}" formControlName="email" placeholder="e-mail">
+              <div *ngIf="registerForm.get('email').hasError('required')
+            && registerForm.get('email').touched" class="invalid-feedback">
+                Email é obrigatório.
+              </div>
+              <div *ngIf="registerForm.get('email').hasError('email')
+          && registerForm.get('email').touched" class="invalid-feedback">
+                Deve ser um e-mail válido.
+              </div>
+            </div>
+          </div>
+        </tab>
+        <tab heading="lots">
+          <div>
+            <div formArrayName="lots" *ngFor="let lot of lots.controls; let i =index">
+              <fieldset [formGroupName]="i" class="form-group">
+                <legend class="d-flex justify-content-between capitalize">
+                  {{'lots'}}
+                  <button (click)="removeLot(i)" class="btn btn-sm btn-warning mb-1">remove</button>
+                </legend>
+                <div class="row">
+                  <div class="form-group col-md-4">
+                    <label>Nome</label>
+                    <input type="text" class="form-control" formControlName="name" placeholder="lot">
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label>Quantidade</label>
+                    <input type="text" class="form-control" formControlName="quantity" placeholder="000">
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label>Preço</label>
+                    <input type="text"  class="form-control" formControlName="price" placeholder="R$ 0,00">
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label>Data Início</label>
+                    <input type="text" class="form-control" formControlName="startDate" placeholder="01/01/2019">
+                  </div>
+                  <div class="form-group col-md-4">
+                    <label>Data Fim</label>
+                    <input type="text" class="form-control" formControlName="endDate" placeholder="01/01/2019">
+                  </div>
+                  
+                </div>
+              </fieldset>
+            </div>
+            <button (click)="addLot()" class="btn btn-outline-primary">
+              Adicionar lot
+            </button>
+          </div>
+        </tab>
+        <tab heading="Redes Sociais">
+          <div formArrayName="socialNetworks" *ngFor="let socialNetwork of socialNetworks.controls; let i =index">
+            <fieldset [formGroupName]="i" class="form-group">
+              <legend class="d-flex justify-content-between capitalize">
+                <button class="btn btn-sm btn-warning mb-1"
+                 (click)="removeSocialNetworks(i)" >remove</button>
+              </legend>
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <label>Nome</label>
+                  <select class="form-control" formControlName="name">
+                    <option value="">Selecione</option>
+                    <option value="fab fa-youtube">Youtube</option>
+                    <option value="fab fa-instagram">Instagram</option>
+                    <option value="fab fa-facebook">Facebook</option>
+                    <option value="fab fa-twitter">Twitter</option>
+                    <option value="fab fa-google">Google</option>
+                    <option value="fab fa-linkedin">Linkedin</option>
+                    <option value="fab fa-pinterest">Pinterest</option>
+                    <option value="fab fa-whatsapp">Whatsapp</option>
+                    <option value="fab fa-telegram">Telegram</option>
+                    <option value="fab fa-skype">Skype</option>
+                    <option value="fab fa-vimeo">Vimeo</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-4">
+                  <label>Link</label>
+                  <input type="text"  formControlName="url" class="form-control" placeholder="URL">
+                </div>
+              </div>
+            </fieldset>
+            </div>
+          <button (click)="addSocialNetworks()"  class="btn btn-outline-primary">
+            Adicionar Rede Social
+          </button>
+        </tab>
+      </tabset>
+      <div class="row">
+        <div class="col-md-12 d-flex justify-content-end">
+           <!-- {{registerForm.value | json}}  -->
+          <button [disabled]="!registerForm.valid" class="btn btn-success my-2" >Salvar
+            Alterações</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-row">
+        <div class="form-group col-md-9">
+           <input type="file" #file (change)="onFileChange($event.target.files)" class="form-control is-invalid"
+            formControlName="imageURL" placeholder="" style="display: none"> 
+        </div>
+      </div>
+      <div class="card profile-card-2">
+        <div class="card-img-block">
+           <img [src]="imageURL" class="img-fluid" (click)="file.click()" style="cursor: pointer; width: 350px;"
+            alt="Card image cap" /> 
+        </div>
+        <div class="card-body pt-3">
+          <h4>{{event.theme}}</h4>
+          <p class="card-text">
+            <b>place:</b> {{event.place}}
+            <br>
+            <b>Data:</b> {{event.eventDate | DateTimeFormatPipe}}
+          </p>
+          <hr>
+          <p class="card-text">
+            <b>Contatos</b><br>
+            <small class="text-muted">phone: {{event.phone | mask: '(000) 00000-0000'}}</small>
+            <br>
+            <small class="text-muted">e-mail: {{event.email}}</small>
+          </p>
+          <p class="card-text">
+            Capacidade:
+            <small class="text-muted">{{event.quantity}}</small>
+          </p>
+          <div class="row">
+            <div class="icon-block col-md-8 iconesSociais">
+              <a class="mr-3"
+                target="_blank">
+                <i class="fab fa-youtube"></i>
+              </a>
+            </div>
+            <!--div class="col-md-4 d-flex justify-content-center">  
+              <a href="#" class="btn btn-outline-primary">Participar</a>
+            </div-->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

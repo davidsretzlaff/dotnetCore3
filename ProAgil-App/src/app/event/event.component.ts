@@ -7,7 +7,6 @@ import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { ptBrLocale } from 'ngx-bootstrap/locale';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { ToastrService } from 'ngx-toastr';
-import { stringify } from '@angular/compiler/src/util';
 
 defineLocale('pt-br', ptBrLocale);
 

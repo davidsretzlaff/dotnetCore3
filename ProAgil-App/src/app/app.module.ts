@@ -21,6 +21,9 @@ import { UserComponent } from './User/User.component';
 import { LoginComponent } from './User/login/login.component';
 import { RegistrationComponent } from './User/registration/registration.component';
 import { AuthInterceptor } from './auth/auth.interceptor.spec';
+import { EventEditComponent } from './event/EventEdit/EventEdit.component';
+import { NgxMaskModule, IConfig } from 'ngx-mask';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 
 @NgModule({
   declarations: [
@@ -35,7 +38,8 @@ import { AuthInterceptor } from './auth/auth.interceptor.spec';
       UserComponent,
       UserComponent,
       RegistrationComponent,
-      LoginComponent
+      LoginComponent,
+      EventEditComponent
    ],
   imports: [
     BrowserModule,
@@ -48,7 +52,9 @@ import { AuthInterceptor } from './auth/auth.interceptor.spec';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     BsDatepickerModule.forRoot(),
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    TabsModule.forRoot(),
+    NgxMaskModule.forRoot(),
   ],
   providers: [
     {
