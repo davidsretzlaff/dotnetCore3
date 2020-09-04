@@ -52,30 +52,29 @@ export class EventEditComponent implements OnInit {
     this.eventService.getEventById(idEvent)
       .subscribe(
         (event: Event) => {
-           var t2 = Object.assign({}, event);
-           var t1 = {...event};
-           console.log(t1);
-           console.log(t2);
-           //this.event = {...event};
-          // this.fileNameToUpdate = event.imageURL.toString();
 
-          // this.imageURL = `http://localhost:5000/resources/images/${this.event.imageURL}?_ts=${this.dateNow}`;
+          this.event = {...event};
+          this.fileNameToUpdate = event.imageURL.toString();
 
-          // this.event.imageURL = '';
-          // this.registerForm.patchValue(this.event);
+          this.imageURL = `http://localhost:5000/resources/images/${this.event.imageURL}?_ts=${this.dateNow}`;
 
-          // this.event.lots.forEach(lot => {
-          //   this.lots.push(this.createLot(lot));
-          // });
-          // this.event.socialNetworks.forEach(sn => {
-          //   this.socialNetworks.push(this.createSocialNetworks(sn));
-          // });
+          this.event.imageURL = '';
+          this.registerForm.patchValue(this.event);
+
+          this.event.lots.forEach(lot => {
+            //this.lots.push(this.createLot(lot));
+            this.lots.push(this.createLot(lot));
+          });
+          this.event.socialNetworks.forEach(sn => {
+            this.socialNetworks.push(this.createSocialNetworks(sn));
+          });
         }
       );
   }
 
   validation(){
     this.registerForm = this.fb.group({
+      id: [],
       theme: ['',[Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
       place: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -83,37 +82,39 @@ export class EventEditComponent implements OnInit {
       eventDate: ['', Validators.required],
       phone: ['', Validators.required],
       imageURL: [''],
-      lots: this.fb.array([this.createLot()]),
-      socialNetworks: this.fb.array([this.createSocialNetworks()])
+      lots: this.fb.array([]),
+      socialNetworks: this.fb.array([])
     });
   }
 
 
-  createLot(): FormGroup {
+  createLot(lote: any): FormGroup {
     return this.fb.group({
-      name:  ['', Validators.required],
-      quantity:  ['', Validators.required],
-      price:  ['', Validators.required],
-      startDate: [''],
-      endDate: ['']
+      id: [lote.id],
+      name: [lote.name, Validators.required],
+      quantity: [lote.quantity, Validators.required],
+      price:  [lote.price, Validators.required],
+      startDate: [lote.startDate],
+      endDate: [lote.endDate]
     });
   }
 
-  createSocialNetworks(): FormGroup {
+  createSocialNetworks(socialNetworks: any): FormGroup {
     return this.fb.group({
-      name: ['', Validators.required],
-      url: ['', Validators.required]
+      id:[socialNetworks.Id],
+      name: [socialNetworks.name, Validators.required],
+      url: [socialNetworks.url, Validators.required]
     });
   }
 
   addLot() {
     //this.lots.push(this.createLot({ id: 0 }));
-    this.lots.push(this.createLot());
+    this.lots.push(this.createLot({id: 0}));
   }
 
   addSocialNetworks() {
     //this.socialNetworks.push(this.createSocialNetworks({ id: 0 }));
-    this.socialNetworks.push(this.createSocialNetworks());
+    this.socialNetworks.push(this.createSocialNetworks({id:0}));
   }
 
   removeLot(id: number) {
